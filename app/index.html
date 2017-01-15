@@ -1,0 +1,48 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Log in</h1>
+        <form onsubmit="return authenticate()">
+            <label for="username">Username:</label>
+            <input id="username" type="text" data-type="username" required>
+            <label for="password">Password:</label>
+            <input id="password" type="password" data-type="password" required>
+            <input id="authUrl" type="text" data-type="authUrl">
+            <input type="submit" Value="Log in">
+        </form>
+    </body>
+
+
+    <script>
+        const authInput = document.querySelector('#authUrl');
+        authInput.value = getParameterByName('authUrl');
+        function getParameterByName(name) {
+            let url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+
+        function authenticate() {
+            const form = document.querySelector('form');
+            const formData = {};
+            for(let i = 0; i < form.length; i++) {
+                const currentInput = form[i];
+                if (currentInput.dataset.type) {
+                    formData[currentInput.dataset.type] = currentInput.value;
+                }
+            }
+            console.log(formData);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/authenticate");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify(formData));
+            return false;
+        }
+    </script>
+</html>
+
